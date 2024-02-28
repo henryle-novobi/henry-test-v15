@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+    <templates id="template" xml:space="preserve"> <t t-name="InvoiceXmlTemplate">
+        <receipt align='center' width='40' value-thousands-separator=''>
+            <t t-if='company'>
+                <h4><t t-esc='company.name'/></h4>
+                <br/>
+            </t>
+            <div font='b'>
+                <t t-if='company.contact_address'>
+                    <div><t t-esc='company.contact_address'/></div>
+                </t>
+                <t t-if='company.phone'>
+                    <div>Tel:<t t-esc='company.phone'/></div>
+                </t>
+                <t t-if='company.vat'>
+                    <div>VAT:<t t-esc='company.vat'/></div>
+                </t>
+                <t t-if='company.email'>
+                    <div><t t-esc='company.email'/></div>
+                </t>
+                <t t-if='company.website'>
+                    <div><t t-esc='company.website'/></div>
+                </t>
+            </div>
+            <br/><br/>
+            <t t-debug="pdb"/>
+            <t t-if='partner'>
+                <h4><t t-esc='partner.display_name'/></h4>
+                <br/>
+            </t>
+            <div font='b'>
+                <t t-if='partner.street'>
+                    <div><t t-esc='partner.street'/></div>
+                </t>
+                <t t-if='partner.state_id'>
+                    <div><t t-esc='partner.state_id[1]'/>
+                        <t t-esc='partner.zip'/></div>
+                </t>
+                <t t-if='partner.country_id'>
+                    <div><t t-esc='partner.country_id[1]'/></div>
+                </t>
+                <t t-if='partner.phone'>
+                    <div>Tel:<t t-esc='partner.phone'/></div>
+                </t>
+                <t t-if='partner.email'>
+                    <div><t t-esc='partner.email'/></div>
+                </t>
+                <t t-if='partner.website'>
+                    <div><t t-esc='partner.website'/></div>
+                </t>
+            </div>
+            <br/><br/>
+            <h4>
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'posted'">Invoice :
+                </span>
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice :
+                </span>
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice :
+                </span>
+                <span t-if="o.move_type == 'out_refund'">Credit Note :
+                </span>
+                <span t-if="o.move_type == 'in_refund'">Vendor Credit Note:
+                </span>
+                <span t-if="o.move_type == 'in_invoice'">Vendor Bill :
+                </span>
+                <span t-if="o.name != '/'" t-esc="o.name"/>
+            </h4>
+            <br/>
+            <div id="informations" class="row mt32 mb32">
+                <t t-if='o.invoice_date'>
+                    <div>Invoice Date: <t t-esc='o.invoice_date'/></div>
+                </t>
+                <t t-if='o.invoice_date_due and o.move_type == "out_invoice" and o.state == "posted"'>
+                    <div>Due Date: <t t-esc='o.invoice_date_due'/></div>
+                </t>
+                <t t-if='o.invoice_origin'>
+                    <div>Source: <t t-esc='o.invoice_origin'/></div>
+                </t>
+                <t t-if='partner.ref'>
+                    <div>Customer Code: <t t-esc='partner.ref'/></div>
+                </t>
+                <t t-if='o.ref'>
+                    <div>Reference: <t t-esc='o.ref'/></div>
+                </t>
+
+            </div>
+            <br/><br/>
+
+            <t t-call="invoiceOrderLines"></t>
+
+
+            <br/><br/>
+
+            <div
+                id="total" class="row">
+                <!-- Tax Totals  -->
+
+                ----------------------------
+
+                <t t-call="document_tax_totals"/>
+
+
+                ----------------------------
+
+                <br/>
+                <!--Payments-->
+                <t t-if="o.payment_state != 'invoicing_legacy'">
+                    <t t-foreach="payment_vals" t-as="payment_vals">
+                        <div>
+                            Paid on:
+                            <t t-esc="payment_vals['date']"/>
+                        </div>
+                        <div>
+                            Paid Amount:
+                            <t t-if="in_currency.position=='before'">
+                                <t t-esc="in_currency.symbol"/><t t-esc="payment_vals['amount']"/>
+                            </t>
+                            <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                                <t t-esc="payment_vals['amount']"/><t t-esc="in_currency.symbol"/>
+                            </t>
+                            <t t-else="">
+                                <t t-esc="payment_vals['amount']"/><t t-esc="in_currency.name"/>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+                <t t-if="payment_vals">
+                    <div class="border-black">
+                        <b>Amount Due:
+                            <t t-if="in_currency.position=='before'">
+                                <t t-esc="in_currency.symbol"/><t t-esc="o.amount_residual"/>
+                            </t>
+                            <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                                <t t-esc="o.amount_residual"/><t t-esc="in_currency.symbol"/>
+                            </t>
+                            <t t-else="">
+                                <t t-esc="o.amount_residual"/><t t-esc="in_currency.name"/>
+                            </t>
+                        </b>
+                    </div>
+                </t>
+            </div>
+
+
+            <!-- last payment terms part -->
+            <br/><br/>
+
+            <t t-debug="pdb"/>
+            <t t-if="['out_invoice', 'in_refund'].includes(o.move_type) and o.payment_reference" name="payment_communication">
+                Please use the following communication for your payment :
+                <b><span t-esc="o.payment_reference"/></b>
+            </t>
+            <div t-if="o.invoice_payment_term_id" name="payment_term">
+                Payment Terms:<span t-esc="o.invoice_payment_term_id[1]"/>
+            </div>
+            <div t-if="!is_narration_empty" name="comment">
+                <span t-esc="o.narration"/>
+            </div>
+            <div t-if="! is_fiscal_empty" name="note">
+                <span t-esc="fiscal_position.note"/>
+            </div>
+            <t t-if="o.invoice_incoterm_id.length" name="incoterm">
+                <div>Incoterm:
+                    <t t-esc="invoice_incoterm.code"/>
+                    -
+                    <t t-esc="invoice_incoterm.name"/></div>
+            </t>
+            <div id="qrcode" t-if="o.display_qr_code">
+                <t t-if="qr_code_urls.get(o.id)">
+                    <div class="text-center">Scan me with your banking app.</div><br/><br/>
+                    <img class="border border-dark rounded" t-att-src="qr_code_urls[o.id]"/>
+                </t>
+            </div>
+        </receipt>
+    </t>
+
+    <t t-name="invoiceOrderLines">
+        <t
+        t-set="current_subtotal" t-value="0"/>
+        <!-- <div>
+                                                                                                                                                        <span>Description</span>
+                                                                                                                                                        <span>Quantity</span>
+                                                                                                                                                        <span>Unit Price</span>
+                                                                                                                                                        <span>Discount</span>
+                                                                                                                                                        <span>Taxes</span>
+                                                                                                                                                        <span>Amount</span>
+                                                                                                                                                    </div> -->
+        <br/>
+        <t t-foreach="lines" t-as="line">
+            <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+            <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+            <t t-if="! line.display_type">
+                <div>
+                    <t t-esc="line.name"/>
+                    <t t-esc="line.quantity"/>
+                    <t t-esc="line.product_uom_id[1]"/>
+                    <t t-if="in_currency.position=='before'">
+                        <t t-esc="in_currency.symbol"/><t t-esc="line.price_unit"/>
+                    </t>
+                    <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                        <t t-esc="line.price_unit"/><t t-esc="in_currency.symbol"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="line.price_unit"/><t t-esc="in_currency.name"/>
+                    </t>
+                </div>
+                <div class="discount" t-if="display_discount">
+                    Disc.%:
+                    <t t-esc="line.discount"/>
+                </div>
+                <div class="taxes" t-if="taxes[line.id] != ''">
+                    Taxes:
+                    <t t-esc="taxes[line.id]"/>
+                </div>
+                <div class="subtotal">
+                    Subtotal (Tax Exc.):
+                    <t t-if="in_currency.position=='before'">
+                        <t t-esc="in_currency.symbol"/><t t-esc="line.price_subtotal"/>
+                    </t>
+                    <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                        <t t-esc="line.price_subtotal"/><t t-esc="in_currency.symbol"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="line.price_subtotal"/><t t-esc="in_currency.name"/>
+                    </t>
+                </div>
+                <div class="subtotal" t-if="taxes[line.id] != ''">
+                    Amount (Tax Inc.):
+                    <t t-if="in_currency.position=='before'">
+                        <t t-esc="in_currency.symbol"/><t t-esc="line.price_total"/>
+                    </t>
+                    <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                        <t t-esc="line.price_total"/><t t-esc="in_currency.symbol"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="line.price_total"/><t t-esc="in_currency.name"/>
+                    </t>
+                </div>
+            </t>
+            <t t-if="line.display_type == 'line_section'">
+                <div colspan="99">
+                    <t t-esc="line.name"/>
+                </div>
+                <t t-set="current_section" t-value="line"/>
+                <t t-set="current_subtotal" t-value="0"/>
+            </t>
+            <t t-if="line.display_type == 'line_note'">
+                <div colspan="99">
+                    <t t-esc="line.name"/>
+                </div>
+            </t>
+            <br/>
+        </t>
+    </t>
+
+    <t t-name="document_tax_totals">
+
+        <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+            <div class="border-black o_subtotal">
+                <t t-esc="subtotal['name']"/>:
+                <t t-esc="subtotal['amount']"/>
+            </div>
+
+            <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+            <t t-call="tax_groups_totals"/>
+        </t>
+
+        <!--Total amount with all taxes-->
+        <div class="border-black o_total">
+            <b>
+                Total :
+                <t t-if="in_currency.position=='before'">
+                    <t t-esc="in_currency.symbol"/><t t-esc="tax_totals['amount_total']"/>
+                </t>
+                <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                    <t t-esc="tax_totals['amount_total']"/><t t-esc="in_currency.symbol"/>
+                </t>
+                <t t-else="">
+                    <t t-esc="tax_totals['amount_total']"/><t t-esc="in_currency.name"/>
+                </t>
+            </b>
+        </div>
+
+    </t>
+    <t t-name="tax_groups_totals">
+        <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+            <div>
+                <t t-if="tax_totals['groups_by_subtotal'][subtotal_to_show].length > 1">
+
+                    <span t-esc="amount_by_group['tax_group_name']"/>
+                    <span class="text-nowrap">
+                        on
+                        <t t-esc="amount_by_group['formatted_tax_group_base_amount']"/>
+                    </span>
+                    <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
+                </t>
+                <t t-else="">
+                    <span class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>:
+                    <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
+                </t>
+            </div>
+        </t>
+
+    </t>
+</templates>

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+    <templates id="template" xml:space="preserve"> <t t-name="saleOrderXmlReceipt">
+        <receipt align='center' width='40' value-thousands-separator=''>
+            <t t-if='company'>
+                <h4><t t-esc='company.name'/></h4>
+                <br/>
+            </t>
+            <div font='b'>
+                <t t-if='company.contact_address'>
+                    <div><t t-esc='company.contact_address'/></div>
+                </t>
+                <t t-if='company.phone'>
+                    <div>Tel:<t t-esc='company.phone'/></div>
+                </t>
+                <t t-if='company.vat'>
+                    <div>VAT:<t t-esc='company.vat'/></div>
+                </t>
+                <t t-if='company.email'>
+                    <div><t t-esc='company.email'/></div>
+                </t>
+                <t t-if='company.website'>
+                    <div><t t-esc='company.website'/></div>
+                </t>
+            </div>
+            <br/><br/>
+            <t t-debug="pdb"/>
+            <t t-if='partner'>
+                <h4><t t-esc='partner.display_name'/></h4>
+                <br/>
+            </t>
+            <div font='b'>
+                <t t-if='partner.street'>
+                    <div><t t-esc='partner.street'/></div>
+                </t>
+                <t t-if='partner.state_id'>
+                    <div><t t-esc='partner.state_id[1]'/>
+                        <t t-esc='partner.zip'/></div>
+                </t>
+                <t t-if='partner.country_id'>
+                    <div><t t-esc='partner.country_id[1]'/></div>
+                </t>
+                <t t-if='partner.phone'>
+                    <div>Tel:<t t-esc='partner.phone'/></div>
+                </t>
+                <t t-if='partner.email'>
+                    <div><t t-esc='partner.email'/></div>
+                </t>
+                <t t-if='partner.website'>
+                    <div><t t-esc='partner.website'/></div>
+                </t>
+            </div>
+            <br/><br/>
+
+            <t t-if="doc.partner_shipping_id[0] == doc.partner_invoice_id[0] and doc.partner_invoice_id[0] != doc.partner_id[0] || doc.partner_shipping_id[0] != doc.partner_invoice_id[0]">
+
+                <div t-if="doc.partner_shipping_id[0] == doc.partner_invoice_id[0]">Invoicing and Shipping Address:</div>
+                <div t-if="doc.partner_shipping_id[0] != doc.partner_invoice_id[0]">Invoicing Address:</div>
+                <t t-if="doc.partner_invoice_id">
+                    <div font='b'>
+                        <t t-if='partner_invoice_id.name'>
+                            <div><t t-esc='partner_invoice_id.name'/></div>
+                        </t>
+                        <t t-if='partner_invoice_id.street'>
+                            <div><t t-esc='partner_invoice_id.street'/></div>
+                        </t>
+                        <t t-if='partner_invoice_id.state_id'>
+                            <div><t t-esc='partner_invoice_id.state_id[1]'/>
+                                <t t-esc='partner_invoice_id.zip'/></div>
+                        </t>
+                        <t t-if='partner_invoice_id.country_id'>
+                            <div><t t-esc='partner_invoice_id.country_id[1]'/></div>
+                        </t>
+                        <t t-if='partner_invoice_id.phone'>
+                            <div>Tel:<t t-esc='partner_invoice_id.phone'/></div>
+                        </t>
+                        <t t-if='partner_invoice_id.email'>
+                            <div><t t-esc='partner_invoice_id.email'/></div>
+                        </t>
+                    </div>
+                </t>
+                <t t-if="doc.partner_shipping_id[0] != doc.partner_invoice_id[0]">
+                    <div>Shipping Address:</div>
+                    <div font='b'>
+                        <t t-if='partner_shipping_id.name'>
+                            <div><t t-esc='partner_shipping_id.name'/></div>
+                        </t>
+                        <t t-if='partner_shipping_id.street'>
+                            <div><t t-esc='partner_shipping_id.street'/></div>
+                        </t>
+                        <t t-if='partner_shipping_id.state_id'>
+                            <div><t t-esc='partner_shipping_id.state_id[1]'/>
+                                <t t-esc='partner_shipping_id.zip'/></div>
+                        </t>
+                        <t t-if='partner_shipping_id.country_id'>
+                            <div><t t-esc='partner_shipping_id.country_id[1]'/></div>
+                        </t>
+                        <t t-if='partner_shipping_id.phone'>
+                            <div>Tel:<t t-esc='partner_shipping_id.phone'/></div>
+                        </t>
+                        <t t-if='partner_shipping_id.email'>
+                            <div><t t-esc='partner_shipping_id.email'/></div>
+                        </t>
+                    </div>
+                </t>
+
+
+            </t>
+            <br/><br/>
+
+            <h4 class="mt16">
+                <t t-if="!is_pro_forma">
+                    <span t-if="!['draft','sent'].includes(doc.state) ">Order #
+                    </span>
+                    <span t-if="['draft','sent'].includes(doc.state) ">Quotation #
+                    </span>
+                </t>
+                <t t-if="is_pro_forma">
+                    <span>Pro-Forma Invoice #
+                    </span>
+                </t>
+                <span t-esc="doc.name"/>
+            </h4>
+            <br/>
+            <div class="row mt32 mb32" id="informations">
+
+                <t t-if='doc.client_order_ref'>
+                    <div>Your Reference:
+                        <t t-esc='doc.client_order_ref'/></div>
+                </t>
+                <t t-if="doc.date_order and !['draft','sent'].includes(doc.state)">
+                    <div>Order Date:
+                        <t t-esc='doc.date_order'/></div>
+                </t>
+                <t t-if="doc.date_order and ['draft','sent'].includes(doc.state)">
+                    <div>Quotation Date:
+                        <t t-esc='doc.date_order'/></div>
+                </t>
+                <t t-if="doc.validity_date and ['draft','sent'].includes(doc.state) ">
+                    <div>Expiration:
+                        <t t-esc='doc.validity_date'/></div>
+                </t>
+                <t t-if='doc.user_id.length'>
+                    <div>Salesperson:
+                        <t t-esc='doc.user_id[1]'/></div>
+                </t>
+            </div>
+
+            <br/><br/>
+
+            <t t-call="saleOrderLines"></t>
+            <br/><br/>
+
+            <div
+                id="total" class="row">
+                <!-- Tax Totals  -->
+
+                ----------------------------
+
+                <t t-call="document_tax_totals"/>
+
+                ----------------------------
+            </div>
+            <br/><br/>
+
+            <div t-if="doc.signature" class="mt32 ml64 mr4" name="signature">
+                <div class="offset-8">
+                    Signature:
+                </div>
+                <div class="offset-8">
+                    <img t-att-src="signature_path" style="max-height: 4cm; max-width: 8cm;"/>
+                </div>
+                <div class="offset-8 text-center">
+                    Signed By:
+                    <t t-esc="doc.signed_by"/>
+                </div>
+            </div>
+
+            <br/>
+            <!-- <div t-esc="doc.note"/> -->
+            <div t-if="doc.payment_term_id">
+                Payment Terms:
+                <span t-esc="doc.payment_term_id[1]"/>
+            </div>
+            <div id="fiscal_position_remark" t-if="doc.fiscal_position_id and  !is_fiscal_empty">
+                Fiscal Position Remark:
+                <span t-esc="doc.fiscal_position_id[1]"/>
+            </div>
+        </receipt>
+    </t>
+
+    <t t-name="saleOrderLines">
+        <t t-set="current_subtotal" t-value="0"/>
+        <br/>
+        <t t-foreach="order_line" t-as="line">
+            <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+            <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+            <t t-if="! line.display_type">
+                <div>
+                    <t t-esc="line.name"/>
+                    <t t-esc="line.product_uom_qty"/>
+                    <t t-esc="line.product_uom[1]"/>
+                    <t t-if="in_currency.position=='before'">
+                        <t t-esc="in_currency.symbol"/><t t-esc="line.price_unit"/>
+                    </t>
+                    <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                        <t t-esc="line.price_unit"/><t t-esc="in_currency.symbol"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="line.price_unit"/><t t-esc="in_currency.name"/>
+                    </t>
+                </div>
+                <div class="discount" t-if="display_discount">
+                    Disc.%:
+                    <t t-esc="line.discount"/>
+                </div>
+                <div class="taxes" t-if="taxes[line.id] != ''">
+                    Taxes:
+                    <t t-esc="taxes[line.id]"/>
+                </div>
+                <div class="subtotal">
+                    Subtotal (Tax Exc.):
+                    <t t-if="in_currency.position=='before'">
+                        <t t-esc="in_currency.symbol"/><t t-esc="line.price_subtotal"/>
+                    </t>
+                    <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                        <t t-esc="line.price_subtotal"/><t t-esc="in_currency.symbol"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="line.price_subtotal"/><t t-esc="in_currency.name"/>
+                    </t>
+                </div>
+                <div class="subtotal" t-if="taxes[line.id] != ''">
+                    Amount (Tax Inc.):
+                    <t t-if="in_currency.position=='before'">
+                        <t t-esc="in_currency.symbol"/><t t-esc="line.price_total"/>
+                    </t>
+                    <t t-elif="in_currency.position=='after' and in_currency.symbol!='€'">
+                        <t t-esc="line.price_total"/><t t-esc="in_currency.symbol"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="line.price_total"/><t t-esc="in_currency.name"/>
+                    </t>
+                </div>
+            </t>
+            <t t-if="line.display_type == 'line_section'">
+                <div colspan="99">
+                    <t t-esc="line.name"/>
+                </div>
+                <t t-set="current_section" t-value="line"/>
+                <t t-set="current_subtotal" t-value="0"/>
+            </t>
+            <t t-if="line.display_type == 'line_note'">
+                <div colspan="99">
+                    <t t-esc="line.name"/>
+                </div>
+            </t>
+            <br/>
+        </t>
+    </t>
+
+
+</templates>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+<odoo>
+    <record id="inherit_res_config_settings_form_view" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="95"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='companies']" position="after">
+                <h2>Printer Auto Sync Configuration</h2>
+                <div class="row mt16 o_settings_container" name="odoo_document_printer">
+                    <div class=" col-lg-6 o_setting_box" id="printer_conf" title="Enable auto sync with the printer.">
+                        <div class="">
+                            <div class="o_setting_left_pane">
+                                <field name="allow_auto_sync" colspan="4" nolabel="1"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label string="Allow auto sync with the printer" for="allow_auto_sync"/>
+                                <div class="text-muted">
+                                    Enable auto sync with the printer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 o_setting_box" id="printer_conf" title="Enable auto sync with the printer." attrs="{'required': [('allow_auto_sync', '!=', False)], 'invisible':[('allow_auto_sync', '=', False)]}">
+                        <div class="o_setting_right_pane">
+                            <div>
+                                <label string="Provide the connected printer name" for="printer_name"/>
+                                <div class="text-muted">
+                                    Add the printer name.
+                                </div>
+                            </div>
+                            <field name="printer_name" colspan="4" nolabel="1"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

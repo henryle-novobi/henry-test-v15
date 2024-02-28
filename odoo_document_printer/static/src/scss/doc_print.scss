@@ -1,0 +1,28 @@
+/* Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) */
+/* See LICENSE file for full copyright and licensing details. */
+/* License URL : <https://store.webkul.com/license.html/> */
+
+.oe_hidden{
+    display: none;
+}
+
+.oe_status .oe_red,
+.oe_icon.oe_red {
+    color: rgb(197, 52, 0);
+}
+.oe_status .oe_green,
+.oe_icon.oe_green {
+    color: rgb(94, 185, 55);
+}
+// .nw_printer.oe_status.js_synch {
+//     margin-top: 13px;
+// }
+
+.js_print_doc{
+    margin: 0 auto;
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    right: 0;
+    z-index: 100;
+}

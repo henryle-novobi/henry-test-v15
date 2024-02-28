@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+
+<odoo>
+    <data noupdate="1">
+
+
+        <record id="odoo_doc_printer_1" model="odoo.doc.printer">
+            <field name="name">Account</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="printer_type">thermal</field>
+            <field name="printer_name">Default_Printer</field>
+            <field name="active">False</field>
+        </record>
+
+        <record id="odoo_doc_printer_2" model="odoo.doc.printer">
+            <field name="name">Sales</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="printer_type">thermal</field>
+            <field name="printer_name">Default_Printer</field>
+            <field name="active">False</field>
+        </record>
+
+        <record id="odoo_doc_printer_3" model="odoo.doc.printer">
+            <field name="name">Purchase</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="printer_type">thermal</field>
+            <field name="printer_name">Default_Printer</field>
+            <field name="active">False</field>
+        </record>
+
+
+    </data>
+</odoo>
